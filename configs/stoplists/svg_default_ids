@@ -1,0 +1,16 @@
+# This file lists character strings usually used in SVGs to
+# identify drawing elements that are not administrative subdivision
+# and can therefore be ignored.
+#
+# These are prefixes: in an actual SVG file, a typical occurrence of
+# an ID would be "clipPath3833". IDs prefixed by elements of the 
+# present file will be ignored.
+
+clipPath
+rect
+path
+desc
+style
+stop
+defs
+metadata
