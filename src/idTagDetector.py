@@ -15,31 +15,47 @@ class IdTagDetector:
         self.whitelist=[]        
         self.whitelistPath="../configs/whitelists"        
         # The prefixes that have been observed to hold geographic labels in the test maps 
-        self.labelPrefixes = ["path class=", "inkscape:label=", "label=", "id="]
+        #self.labelPrefixes = ["path class", "label", "label", "id"]
+        self.labelPrefixes = ["path class", "inkscape:label", "label", "id"]
         
-    #
+        self.regex = "\s*=\s*\"([^0-9].+?)\""
+        
+    # TODO: implements this
     def loadStopList(self):
         return []
     
-    #
+    # TODO: implements this
     def loadWhiteList(self):
         return []
     
 
-    #
+    # Just to print what has been found, fairly trivial
     def listTags(self):
         print(self.detectedTags)
         
-    #
+    # Seeks prefixes as listed in "self.labelPrefixes", and retrieves following srings if not made entirely of numbers.
     def detect(self):
-        candidates = []
+        candidates = set()
         for labelPrefix in self.labelPrefixes:
-            regex = labelPrefix+"\"([^0-9]+?)\""
-            candidates.extend( re.findall(regex, self.arg) )
-            
+            for i in ( re.findall(labelPrefix+self.regex, self.arg) ):
+                if not re.match("(path|svg|g|clipPath|rect|stop|style|metadata|title|defs|linearGradient)\d+", i):
+                    candidates.add(i)
         self.detectedTags = candidates
+      
+    # Return a list of prefixes most likely used in this SVG document to store IDs.
+    def detectedPrefixes(self):
+        usedPrefixes = []
+        for labelPrefix in self.labelPrefixes:
+            if len( re.findall(labelPrefix+self.regex, self.arg) ) > 0:
+                usedPrefixes.append(labelPrefix)
+        return usedPrefixes 
         
         
+        
+        
+    # Just to return what has been found, fairly trivial
+    #def detectedTags(self):
+        #return self.detectedTags
         
         
         #subdivisionTag = "path"
