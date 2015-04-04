@@ -22,6 +22,10 @@ for infile in args.infiles:
     #print("Reading from "+infile+".")
     svg = open(infile, 'r').read()
     colourManager = SvgColourManager(svg)
+    #colourManager.colourAllRandomRed()
     colourManager.colourAllRandom()
+    #colourManager.colourAllBlack()
     #colourManager.listTagsAndColours()
+    colourManager.blankElementsInList(["State_border", "separator", "State_borders"])
+    
     colourManager.editMap()

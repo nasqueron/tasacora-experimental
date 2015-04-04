@@ -37,31 +37,47 @@ class SvgColourManager:
     def colourAllRandom(self):
         import random
         for area in self.listOfIDs:
-            self.tagsAndColours[area] = hex(random.randint(0, 16777215))[2:].upper()    
-    
+            self.tagsAndColours[area] = "#"+hex(random.randint(0, 16777215))[2:].upper()    
+
+    # sets all subdivision in white
+    def colourAllRandomRed(self):
+        import random
+        for area in self.listOfIDs:
+            #self.tagsAndColours[area] = hex(random.randint(0, 16777215))[2:].upper()  
+            redValue  = random.randint(100, 255)
+            rgbTuple  = (255, 255-redValue, 255-redValue)
+            hexColour = '%02x%02x%02x' % rgbTuple
+            self.tagsAndColours[area] = "#"+hexColour
 
     # Outputs content of self.tagsAndColours to standard output.
     def listTagsAndColours(self):
         for tag in self.tagsAndColours.keys():
             print(tag+"\t\t"+self.tagsAndColours[tag])
 
+    # blanks (sets "fill=None") the elements in the list. Useful for borders etc.
+    def blankElementsInList(self, arg):
+        for i in arg:
+            if i in self.tagsAndColours.keys():
+                self.tagsAndColours[i] = "none"
 
+    # Inserts CSS style instructions between header and body of the SVG file.
     def editMap(self):
         import re
         
-        regex = re.compile("(<\?xml.*?>\s*\n*\s*<svg.*?>)", re.DOTALL)
-
-        print( (re.split (regex, self.inputSVG))[1] )
-        print()
-        # ----------------------------------------------
-        print("<style type=\"text/css\"><![CDATA[")
+        #Assembles output line, inserting CSS style instructions between header and body of the SVG file.
+        regex = re.compile("(^.*?<svg.*?>)(.*)", re.DOTALL)
+        m = regex.match(self.inputSVG)
+        splitFile = re.split (regex, self.inputSVG)
+        outputString = m.group(1) + "\n"
+        outputString = outputString+"<style type=\"text/css\"><![CDATA[\n"
         for tag in self.tagsAndColours.keys():
-            print("\t#"+tag+" { fill: #"+self.tagsAndColours[tag]+" }")
-        print("]]></style>")
-        # ----------------------------------------------
-        print()
-        print( (re.split (regex, self.inputSVG))[2] )
-
+            outputString = outputString+"\t#"+tag+" { fill: "+self.tagsAndColours[tag]+" }\n"
+        outputString = outputString+"]]></style>\n"+m.group(2)
+        
+        print(outputString)
+        
+        
+        
 
         
         

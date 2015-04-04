@@ -4,19 +4,28 @@
 #from bs4 import BeautifulSoup
 import re
 
+# Aligns tags with CSS conventions for valid names/selectors
+def alignCssSelectors(argString):
+    #argString = re.sub("[~!@$%^&*()+=,./';:\"?><[\]\{}|`# ]","_",argString)   # replace invalid characters with underscores. No idea why that does not work
+    argString = re.sub(",","_",argString)   # replace commas with underscores
+    argString = re.sub(" ","_",argString)   # replace spaces with underscores
+    return argString
     
+# Detects and handles identifications.
 class IdTagDetector:
     def __init__(self, arg):
         self.arg=arg
         self.detectedTags=[]
         
-        self.stoplist=[]
+        #self.stoplist=["path", "svg", "g", "clipPath", "rect", "stop", "style", "metadata", "title", "defs", "linearGradient", "#State_borders", "separator"]
+        self.stoplist=["path", "svg", "g", "clipPath", "rect", "stop", "style", "metadata", "title", "defs", "linearGradient"]
         self.stoplistPath="../configs/stoplists"
         self.whitelist=[]        
         self.whitelistPath="../configs/whitelists"        
         # The prefixes that have been observed to hold geographic labels in the test maps 
         #self.labelPrefixes = ["path class", "label", "label", "id"]
-        self.labelPrefixes = ["path class", "inkscape:label", "label", "id"]
+        #self.labelPrefixes = ["path", "class", "inkscape:label", "label", "id"]
+        self.labelPrefixes = ["inkscape:label", "label", "id"]
         
         self.regex = "\s*=\s*\"([^0-9].+?)\""
         
@@ -24,11 +33,20 @@ class IdTagDetector:
     def loadStopList(self):
         return []
     
+    #returns a regex formed of all words in stoplist. These will never be used as semantically informative geographical IDs.
+    def stopListRegex(self):
+        regex = "("
+        for i in self.stoplist:
+            regex = regex+i+"|"
+        regex = regex+" )\d*"
+        #return re.compile(regex)
+        return regex
+        
+    
     # TODO: implements this
     def loadWhiteList(self):
         return []
     
-
     # Just to print what has been found, fairly trivial
     def listTags(self):
         print(self.detectedTags)
@@ -38,7 +56,8 @@ class IdTagDetector:
         candidates = set()
         for labelPrefix in self.labelPrefixes:
             for i in ( re.findall(labelPrefix+self.regex, self.arg) ):
-                if not re.match("(path|svg|g|clipPath|rect|stop|style|metadata|title|defs|linearGradient)\d+", i):
+                #if not re.match("(path|svg|g|clipPath|rect|stop|style|metadata|title|defs|linearGradient)\d+", i):
+                if not re.match(self.stopListRegex(), i):
                     candidates.add(i)
         self.detectedTags = candidates
       
