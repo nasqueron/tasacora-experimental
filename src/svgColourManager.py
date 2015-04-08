@@ -1,10 +1,6 @@
 # takes an SVG file as input. Creates a table associating geographic identifiers and their colours.
 # Writes an SVG file with new colours.
 
-#from bs4 import BeautifulSoup
-#import re
-
-
 class SvgColourManager:
     # Just used in constructor to fill self.listOfIDs
     def fillListOfIDs(self):
@@ -67,7 +63,7 @@ class SvgColourManager:
         #Assembles output line, inserting CSS style instructions between header and body of the SVG file.
         regex = re.compile("(^.*?<svg.*?>)(.*)", re.DOTALL)
         m = regex.match(self.inputSVG)
-        splitFile = re.split (regex, self.inputSVG)
+        #splitFile = re.split (regex, self.inputSVG)
         outputString = m.group(1) + "\n"
         outputString = outputString+"<style type=\"text/css\"><![CDATA[\n"
         for tag in self.tagsAndColours.keys():
