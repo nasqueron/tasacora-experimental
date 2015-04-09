@@ -15,7 +15,7 @@ class SvgTreeManager:
         self.tree = etree.fromstring(self.svg, parser=parser)
         
     # ----------------------------------------
-    # returns a list of SVG Paths with that name
+    # returns a list of SVG Paths with that name. Default is void, which returns all SVG:Paths
     def findPath(self, name=""):
         work = []
         for node in self.tree.findall('.//{%s}path' % SVG_NS):
@@ -129,8 +129,13 @@ class SvgTreeManager:
                     previousX = 0.0
                     previousY = 0.0       
 
-                if (i in "Zz"): # We have encountered a STOP signal. Exit loop.
-                    break
+                # Do NOT do that! It's very wrong for countries with non-continuguous land masses (islands).
+                # Might look all right for the USSR or if France is represented by her metropolitan area,
+                # but it will represent Great Britain with Ootsta and Germany with List in Schleswig-Holstein.
+                #if (i in "Zz"): # We have encountered a STOP signal. Exit loop.
+                    #break
+                if (i in "Zz"):
+                    continue
                 
                 if (i in "MLHVCSQTAmlhvcsqta"): # We have encountered a new segment-type. Set typeOfSegment accordingly.
                     typeOfSegment = i
@@ -145,8 +150,6 @@ class SvgTreeManager:
                     state = "wait4"       
                 if (typeOfSegment in "Aa"):
                     state = "wait5"    
-                #if (typeOfSegment in "Zz"):
-                    #break
                 
             if (state == "recieveX"):
                 newX = float(i) + previousX
