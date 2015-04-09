@@ -109,10 +109,7 @@ class SvgTreeManager:
         # This will extract the endpoints of the segments forming the path (removing control points)
         coordinatesX = []
         coordinatesY = []
-        offsetX      = 0.0 
-        offsetY      = 0.0
         pathData      = path.get('d')
-        #transformData = path.get('transform')
         pathData = re.findall('[a-df-zA-DF-Z]+|[\\d.eE\-]+', pathData) # To separate lettres from numbers. E is special case (exponent)
         path_iter = iter( pathData )
         
@@ -121,15 +118,15 @@ class SvgTreeManager:
         typeOfSegment = "" # can take values MLHVCSQTAZmlhvcsqtaz
         previousX = 0.0
         previousY = 0.0
-        for i in path_iter:
+        for i in path_iter:         
             i = i.replace(',', '')
+            
             if (state == "start"):
+                #if (typeOfSegment in "MLHVCSQTAZ"): # Absolute coordinates
+                    #previousX = 0.0
+                    #previousY = 0.0       
 
-                if (typeOfSegment in "MLHVCSQTAZ"): # Absolute coordinates
-                    previousX = 0.0
-                    previousY = 0.0       
-
-                # Do NOT do that! It's very wrong for countries with non-continuguous land masses (islands).
+                # Do NOT break here! It's very wrong for countries with non-continuguous land masses (islands).
                 # Might look all right for the USSR or if France is represented by her metropolitan area,
                 # but it will represent Great Britain with Ootsta and Germany with List in Schleswig-Holstein.
                 #if (i in "Zz"): # We have encountered a STOP signal. Exit loop.
@@ -142,24 +139,28 @@ class SvgTreeManager:
                     continue
 
                 # Setting states to perform operations
-                if (typeOfSegment in "MmLlHhVvTt"):
+                if (typeOfSegment in "MmLlHhVvTt"): # Commands that take 2 arguments
                     state = "recieveX" 
-                if (typeOfSegment in "SsQq"):
+                if (typeOfSegment in "SsQq"):       # Commands that take 4 arguments
                     state = "wait2"
-                if (typeOfSegment in "Cc"):
+                if (typeOfSegment in "Cc"):         # Commands that take 6 arguments
                     state = "wait4"       
-                if (typeOfSegment in "Aa"):
+                if (typeOfSegment in "Aa"):         # Commands that take 7 arguments
                     state = "wait5"    
                 
             if (state == "recieveX"):
+                if (typeOfSegment in "MLHVCSQTAZ"): previousX = 0.0
                 newX = float(i) + previousX
                 coordinatesX.append( newX )
                 previousX = newX
                 state = "recieveY"
                 continue
             if (state == "recieveY"):
+                if (typeOfSegment in "MLHVCSQTAZ"): previousY = 0.0
                 newY = float(i) + previousY
                 coordinatesY.append( newY )
+                #if not (coordinatesX == [] or coordinatesY == []):
+                    #print ("\tSegType=", typeOfSegment, "\tCoordinates: ", coordinatesX[-1], coordinatesY[-1], "\tPreviousY: ", previousY, "\tnewY", newY, "\tfloat(i)", float(i))                 
                 previousY = newY
                 state = "start"  
                 continue
