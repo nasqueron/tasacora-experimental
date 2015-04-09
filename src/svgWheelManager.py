@@ -59,21 +59,17 @@ class SvgWheelManager:
     
     # gives a size to annotation circles based on viewport size.
     def defaultCircleRadius(self):
-        viewBox        = self.treeManager.tree.getroottree().getroot().get('viewBox')
-        viewBoxValues  = [float(x) for x in viewBox.split()]
-        radius = max ( viewBoxValues )/200.0
-        return radius
+        radius = self.treeManager.characteristicDimensions()/200.0
+        return radius    
     
     # gives a width to annotation lines based on viewport size.
     def defaultLineWidth(self):
-        viewBox        = self.treeManager.tree.getroottree().getroot().get('viewBox')
-        viewBoxValues  = [float(x) for x in viewBox.split()]
-        radius = max ( viewBoxValues )/600.0
+        radius = self.treeManager.characteristicDimensions()/600.0
         return radius    
     
     # Inserts an SVG circle on the barycentre of the path given as argument
     def insertCircleOnPath(self, path):
-        pathID = path.get('id')
+        pathID = self.treeManager.getNodeID(path)
         if not "path" in pathID:
             #print(pathID)
             cx = (self.treeManager.centreOfMass(path))[0]
@@ -88,7 +84,7 @@ class SvgWheelManager:
             #self.insertCircleOnPath(node)
         
     def insertRectAroundPath(self, path):
-        pathID = path.get('id')
+        pathID = self.treeManager.getNodeID(path)
         if not "path" in pathID:
         #if "fr" in pathID:
             xMax = max( (self.treeManager.extractPoints(path))[0] )

@@ -15,11 +15,24 @@ class SvgTreeManager:
         self.tree = etree.fromstring(self.svg, parser=parser)
         
     # ----------------------------------------
+    # Attempts to return dimensions of the viewport
+    def characteristicDimensions(self):
+        root    = self.tree.getroottree().getroot()
+        viewBox = root.get('viewBox')
+        if viewBox:
+            return max ( [float(x) for x in viewBox.split()] )
+        width  = root.get('width' )
+        height = root.get('height')
+        if (width and height):
+            return max ( [float(width), float(height)] )
+        return (600)
+        
+    # ----------------------------------------
     # returns a list of SVG Paths with that name. Default is void, which returns all SVG:Paths
     def findPath(self, name=""):
         work = []
         for node in self.tree.findall('.//{%s}path' % SVG_NS):
-            if (name in node.get('id')):
+            if (name in self.getNodeID(node) ):
                 work.append(node)
         return work
     
@@ -40,6 +53,14 @@ class SvgTreeManager:
             else:
                 ancestry.append(currentNode)
         return ancestry
+    
+    #-----------------------------------------
+    # Return node ID
+    def getNodeID(self, node):
+        nodeId = node.get('id')
+        if not node.get('id'):
+            nodeId = node.find("..").get('id')
+        return nodeId
     
     # ----------------------------------------
     # returns transformation (as in 

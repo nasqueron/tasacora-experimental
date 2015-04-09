@@ -21,22 +21,16 @@ for infile in args.infiles:
     
     treeManager = SvgTreeManager(svg)
 
-    for i in treeManager.findPath("gb-gbn"):
-        #print ("-------")
-        #print (i)
-        #print (treeManager.findParent(i))
-        #print (treeManager.findParents(i))
-        
-        #m = [1,0,0,1,0,0]
-        #for j in treeManager.findParents(i):
-            ##print ( "   ", toMatrix( treeManager.getTransform(j) ) )
-            #n = toMatrix( treeManager.getTransform(j) )
-            #m = multiplySvgMatrices (n, m)
-        #print (m)
-        
+    #target = "gb-gbn"
+    #target = "de"
+    #target = "ddr"    
+    target = "so"
+    for i in treeManager.findPath(target):
+        print ( " ==== ", i.get('id'), " ==== ")
         print ( treeManager.getParentsTransformMatrix(i) )
         print ( treeManager.getTransformMatrix(i)        )
         print ( treeManager.getTotalTransformMatrix(i)   )
+        print ( "Path points: ", treeManager.extractPoints(i) )
     
     
     
