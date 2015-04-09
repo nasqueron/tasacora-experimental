@@ -29,8 +29,9 @@ for infile in args.infiles:
     
     
     wheelManager = SvgWheelManager(svg)
-    wheelManager.insertCirclesOnPaths()
-    wheelManager.insertRectAroundPaths()
+    #wheelManager.insertCirclesOnPaths()
+    #wheelManager.insertRectAroundPaths()
+    wheelManager.insertCircleChartOnPaths()
     
     wheelManager.printSVG()
     
