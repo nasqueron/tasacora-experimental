@@ -1,0 +1,6 @@
+*.py[cod]
+*.*~
+__pycache__/
+*.so
+pip-log.txt
+pip-delete-this-directory.txt
