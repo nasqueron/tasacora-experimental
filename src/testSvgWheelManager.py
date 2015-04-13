@@ -7,7 +7,7 @@ from svgWheelManager import *
 #-----------------------------------
 import argparse
 parser = argparse.ArgumentParser(
-    description='test of svgColourManager: takes SVG maps as argument; sould return a list of ID tags and matching colours in standard output.')
+    description='test of svgColourManager: takes SVG maps as argument; should return a the code of a SVG map with superimposed charts, in standard output.')
 # positional argument
 parser.add_argument(
     "infiles",
